@@ -3,8 +3,7 @@ import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Navigate, useLocation } from 'react-router-dom'
-import { useAuthManager } from '@/hooks/useAuth'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 import { Button, Input, Alert, Card, CardBody } from '@/components/ui'
 import { EyeIcon, EyeSlashIcon, UserIcon, LockClosedIcon } from '@heroicons/react/24/outline'
@@ -24,7 +23,7 @@ type LoginFormData = z.infer<typeof loginSchema>
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const { login, isLoading, error, isAuthenticated } = useAuthStore()
-  const { redirectAfterLogin } = useAuthManager()
+  const navigate = useNavigate()
   const location = useLocation()
 
   const {
@@ -43,9 +42,9 @@ export default function LoginPage() {
   // Redirection si déjà connecté
   useEffect(() => {
     if (isAuthenticated) {
-      redirectAfterLogin()
+      navigate('/dashboard')
     }
-  }, [isAuthenticated, redirectAfterLogin])
+  }, [isAuthenticated, navigate])
 
   if (isAuthenticated) {
     return <Navigate to="/dashboard" replace />
@@ -58,7 +57,7 @@ export default function LoginPage() {
         password: data.password,
         rememberMe: data.rememberMe || false
       })
-      redirectAfterLogin()
+      navigate('/dashboard')
     } catch (error) {
       toast.error('Échec de la connexion')
     }

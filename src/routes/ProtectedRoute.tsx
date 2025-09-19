@@ -1,7 +1,6 @@
 // src/routes/ProtectedRoute.tsx
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/store/authStore'
-import { useRoutePermissions } from '@/hooks/useAuth'
 import { UserRole } from '@/types/auth.types'
 import LoadingSpinner from '@/components/common/LoadingSpinner'
 import { ReactNode } from 'react'
@@ -25,8 +24,7 @@ export const ProtectedRoute = ({
   requiredPermissions = [],
   fallback = null
 }: ProtectedRouteProps) => {
-  const { isAuthenticated, isLoading, isInitialized, user, hasRole, hasPermission } = useAuth()
-  const { canAccessRoute } = useRoutePermissions()
+  const { isAuthenticated, isLoading, isInitialized, hasRole, hasPermission } = useAuth()
   const location = useLocation()
 
   // Attendre l'initialisation
@@ -69,16 +67,6 @@ export const ProtectedRoute = ({
         />
       )
     }
-  }
-
-  // Vérifier l'accès à la route
-  if (user && !canAccessRoute(location.pathname)) {
-    return (
-      <Navigate 
-        to="/unauthorized" 
-        replace 
-      />
-    )
   }
 
   return <>{children}</>

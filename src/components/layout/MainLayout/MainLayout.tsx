@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 import { Sidebar } from '../Sidebar/Sidebar'
 import { Header } from '../Header/Header'
-import { useAuthManager } from '@/hooks/useAuth'
+import { useAuthInit } from '@/hooks/useAuthInit'
 import { clsx } from 'clsx'
 
 export const MainLayout = () => {
@@ -11,7 +11,7 @@ export const MainLayout = () => {
   const [isMobile, setIsMobile] = useState(false)
   
   // Hook pour la gestion de l'auth
-  useAuthManager()
+  useAuthInit()
 
   // Détection mobile
   useEffect(() => {
