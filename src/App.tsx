@@ -18,12 +18,12 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
+        <button onClick={() => setCount(count => count + 1)}>
           count is {count}
         </button>
         <div className="bg-blue-500 text-white p-4 rounded-lg">
-  Tailwind CSS est configuré !
-</div>
+          Tailwind CSS est configuré !
+        </div>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
