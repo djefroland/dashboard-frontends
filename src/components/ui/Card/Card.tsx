@@ -1,15 +1,17 @@
-// src/components/ui/Card/Card.tsx
+// src/components/ui/Card/Card.tsx - Version Révolutionnaire
 import { HTMLAttributes, forwardRef } from 'react'
-import { clsx } from 'clsx'
+import clsx from 'clsx'
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
-  variant?: 'default' | 'bordered' | 'shadow' | 'elevated'
+  variant?: 'default' | 'glass' | 'gradient' | 'elevated'
   padding?: 'none' | 'sm' | 'md' | 'lg'
   hover?: boolean
+  glow?: boolean
 }
 
 interface CardHeaderProps extends HTMLAttributes<HTMLDivElement> {
   divider?: boolean
+  gradient?: boolean
 }
 
 interface CardBodyProps extends HTMLAttributes<HTMLDivElement> {}
@@ -17,13 +19,14 @@ interface CardBodyProps extends HTMLAttributes<HTMLDivElement> {}
 interface CardFooterProps extends HTMLAttributes<HTMLDivElement> {
   divider?: boolean
   actions?: boolean
+  gradient?: boolean
 }
 
 const cardVariants = {
-  default: 'bg-white border border-gray-200 rounded-xl',
-  bordered: 'bg-white border-2 border-gray-200 rounded-xl',
-  shadow: 'bg-white border border-gray-200 rounded-xl shadow-soft',
-  elevated: 'bg-white border border-gray-200 rounded-xl shadow-medium'
+  default: 'bg-white border border-secondary-200 rounded-2xl shadow-md',
+  glass: 'bg-white/95 backdrop-blur-xl border border-white/40 rounded-2xl shadow-xl',
+  gradient: 'bg-gradient-to-br from-primary-50 to-accent-50 border border-primary-200 rounded-2xl shadow-lg',
+  elevated: 'bg-white border border-secondary-200 rounded-2xl shadow-2xl'
 }
 
 const cardPadding = {
@@ -39,6 +42,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(({
   variant = 'default',
   padding = 'none',
   hover = false,
+  glow = false,
   children,
   ...props
 }, ref) => {
@@ -48,11 +52,16 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(({
       className={clsx(
         cardVariants[variant],
         cardPadding[padding],
-        hover && 'transition-all duration-200 hover:shadow-medium hover:-translate-y-1',
+        hover && 'hover:shadow-xl hover:-translate-y-2 transition-all duration-300 cursor-pointer',
+        glow && 'hover:shadow-glow-lg',
+        'relative overflow-hidden',
         className
       )}
       {...props}
     >
+      {/* Top gradient line */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-primary-gradient opacity-60"></div>
+      
       {children}
     </div>
   )
@@ -62,6 +71,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(({
 export const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>(({
   className,
   divider = true,
+  gradient = false,
   children,
   ...props
 }, ref) => {
@@ -70,7 +80,8 @@ export const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>(({
       ref={ref}
       className={clsx(
         'px-6 py-4',
-        divider && 'border-b border-gray-200',
+        divider && 'border-b border-secondary-200',
+        gradient && 'bg-gradient-to-r from-primary-50/50 to-transparent',
         className
       )}
       {...props}
@@ -102,6 +113,7 @@ export const CardFooter = forwardRef<HTMLDivElement, CardFooterProps>(({
   className,
   divider = true,
   actions = false,
+  gradient = false,
   children,
   ...props
 }, ref) => {
@@ -109,8 +121,9 @@ export const CardFooter = forwardRef<HTMLDivElement, CardFooterProps>(({
     <div
       ref={ref}
       className={clsx(
-        'px-6 py-4 rounded-b-xl',
-        divider && 'border-t border-gray-200 bg-gray-50',
+        'px-6 py-4 rounded-b-2xl',
+        divider && 'border-t border-secondary-200',
+        gradient && 'bg-gradient-to-r from-secondary-50 to-transparent',
         actions && 'flex items-center justify-end space-x-3',
         className
       )}
@@ -127,7 +140,7 @@ CardHeader.displayName = 'CardHeader'
 CardBody.displayName = 'CardBody'
 CardFooter.displayName = 'CardFooter'
 
-// Composant Stats Card spécialisé pour le Dashboard
+// Composant Stats Card révolutionnaire
 interface StatsCardProps extends Omit<CardProps, 'children'> {
   title: string
   value: string | number
@@ -137,7 +150,8 @@ interface StatsCardProps extends Omit<CardProps, 'children'> {
     label?: string
   }
   icon?: React.ReactNode
-  color?: 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'gray'
+  color?: 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'cyan'
+  onClick?: () => void
 }
 
 export const StatsCard = ({
@@ -146,65 +160,79 @@ export const StatsCard = ({
   change,
   icon,
   color = 'blue',
+  onClick,
   className,
   ...props
 }: StatsCardProps) => {
   const colorStyles = {
-    blue: 'bg-blue-50 text-blue-600 border-blue-200',
-    green: 'bg-green-50 text-green-600 border-green-200',
-    yellow: 'bg-yellow-50 text-yellow-600 border-yellow-200',
-    red: 'bg-red-50 text-red-600 border-red-200',
-    purple: 'bg-purple-50 text-purple-600 border-purple-200',
-    gray: 'bg-gray-50 text-gray-600 border-gray-200'
+    blue: 'from-primary-500 to-primary-600 text-primary-700',
+    green: 'from-success-500 to-success-600 text-success-700',
+    yellow: 'from-warning-500 to-warning-600 text-warning-700',
+    red: 'from-danger-500 to-danger-600 text-danger-700',
+    purple: 'from-purple-500 to-purple-600 text-purple-700',
+    cyan: 'from-accent-500 to-accent-600 text-accent-700'
   }
 
   const changeStyles = {
     increase: 'text-success-600 bg-success-50',
     decrease: 'text-danger-600 bg-danger-50',
-    neutral: 'text-gray-600 bg-gray-50'
+    neutral: 'text-secondary-600 bg-secondary-50'
   }
 
   return (
     <Card 
-      variant="shadow" 
-      hover
-      className={clsx('relative overflow-hidden', className)}
+      variant="glass" 
+      hover={!!onClick}
+      className={clsx('relative overflow-hidden group cursor-pointer', className)}
+      onClick={onClick}
       {...props}
     >
-      {/* Icon background */}
+      {/* Background pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <svg width="100%" height="100%" viewBox="0 0 100 100">
+          <pattern id={`pattern-${color}`} x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <circle cx="10" cy="10" r="2" fill="currentColor" className={colorStyles[color]} />
+          </pattern>
+          <rect width="100%" height="100%" fill={`url(#pattern-${color})`} />
+        </svg>
+      </div>
+
+      {/* Icon */}
       {icon && (
         <div className={clsx(
-          'absolute top-4 right-4 p-2 rounded-lg',
-          colorStyles[color]
+          'absolute top-6 right-6 p-3 rounded-2xl shadow-lg transition-all duration-300 group-hover:scale-110',
+          `bg-gradient-to-br ${colorStyles[color].split(' ')[0]} ${colorStyles[color].split(' ')[1]}`
         )}>
-          {icon}
+          <div className="w-6 h-6 text-white">
+            {icon}
+          </div>
         </div>
       )}
 
       <CardBody>
-        <div className="space-y-2">
-          <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">
+        <div className="space-y-3 relative">
+          <p className="text-sm font-bold text-secondary-600 uppercase tracking-wider">
             {title}
           </p>
           
           <div className="flex items-baseline space-x-3">
-            <p className="text-3xl font-bold text-gray-900">
+            <p className="text-4xl font-bold font-display text-secondary-900">
               {typeof value === 'number' ? value.toLocaleString() : value}
             </p>
             
             {change && (
               <div className={clsx(
-                'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium',
+                'inline-flex items-center px-3 py-1 rounded-full text-sm font-bold',
                 changeStyles[change.type]
               )}>
                 {change.type === 'increase' && (
-                  <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
                   </svg>
                 )}
                 
                 {change.type === 'decrease' && (
-                  <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 )}

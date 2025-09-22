@@ -1,6 +1,5 @@
 // src/components/ui/Table/Pagination.tsx
 import { ReactNode } from 'react'
-import { clsx } from 'clsx'
 
 interface PaginationProps {
   current: number
@@ -81,32 +80,29 @@ export const Pagination = ({
   }
 
   return (
-    <div className={clsx(
-      'flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200',
-      className
-    )}>
+    <div className={`pagination-container ${className || ''}`}>
       {/* Info sur les éléments affichés */}
-      <div className="flex items-center space-x-4">
+      <div className="pagination-info">
         {showTotal ? (
-          <p className="text-sm text-gray-700">
+          <p className="pagination-total-text">
             {showTotal(total, [startItem, endItem])}
           </p>
         ) : (
-          <p className="text-sm text-gray-700">
-            Affichage de <span className="font-medium">{startItem}</span> à{' '}
-            <span className="font-medium">{endItem}</span> sur{' '}
-            <span className="font-medium">{total}</span> résultats
+          <p className="pagination-total-text">
+            Affichage de <span className="font-semibold">{startItem}</span> à{' '}
+            <span className="font-semibold">{endItem}</span> sur{' '}
+            <span className="font-semibold">{total}</span> résultats
           </p>
         )}
 
         {showSizeChanger && (
-          <div className="flex items-center space-x-2">
-            <label className="text-sm text-gray-700">Afficher :</label>
+          <div className="pagination-size-selector">
+            <label className="pagination-select-label">Afficher :</label>
             <select
               value={pageSize}
               onChange={(e) => handlePageSizeChange(Number(e.target.value))}
               disabled={disabled}
-              className="rounded border-gray-300 text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50"
+              className="pagination-select"
             >
               {pageSizeOptions.map(size => (
                 <option key={size} value={size}>
@@ -120,37 +116,28 @@ export const Pagination = ({
 
       {/* Navigation des pages */}
       {totalPages > 1 && (
-        <div className="flex items-center space-x-2">
+        <div className="pagination-controls">
           {/* Bouton Précédent */}
           <button
             onClick={() => handlePageChange(current - 1)}
             disabled={current <= 1 || disabled}
-            className={clsx(
-              'px-3 py-1 rounded border text-sm font-medium transition-colors',
-              current <= 1 || disabled
-                ? 'text-gray-400 border-gray-200 cursor-not-allowed'
-                : 'text-gray-700 border-gray-300 hover:bg-gray-50'
-            )}
+            className={`pagination-button ${
+              current <= 1 || disabled ? '' : ''
+            }`}
           >
             Précédent
           </button>
 
           {/* Numéros de page */}
-          <div className="flex items-center space-x-1">
+          <div className="pagination-buttons">
             {getPageNumbers().map((page, index) => (
               <button
                 key={index}
                 onClick={() => typeof page === 'number' && handlePageChange(page)}
                 disabled={page === '...' || disabled}
-                className={clsx(
-                  'w-8 h-8 rounded text-sm font-medium transition-colors',
-                  page === current
-                    ? 'bg-primary-600 text-white'
-                    : page === '...'
-                    ? 'text-gray-400 cursor-default'
-                    : 'text-gray-700 hover:bg-gray-50',
-                  disabled && 'opacity-50'
-                )}
+                className={`pagination-button ${
+                  page === current ? 'active' : ''
+                } ${page === '...' ? 'ellipsis' : ''}`}
               >
                 {page}
               </button>
@@ -161,12 +148,7 @@ export const Pagination = ({
           <button
             onClick={() => handlePageChange(current + 1)}
             disabled={current >= totalPages || disabled}
-            className={clsx(
-              'px-3 py-1 rounded border text-sm font-medium transition-colors',
-              current >= totalPages || disabled
-                ? 'text-gray-400 border-gray-200 cursor-not-allowed'
-                : 'text-gray-700 border-gray-300 hover:bg-gray-50'
-            )}
+            className="pagination-button"
           >
             Suivant
           </button>

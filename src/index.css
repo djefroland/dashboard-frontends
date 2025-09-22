@@ -1,9 +1,5 @@
-/* Import custom styles */
-@import './styles/globals.css';
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Import des styles propres */
+@import './clean-styles.css';
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
